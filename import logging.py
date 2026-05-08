@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+import sys
 import traceback
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,8 +24,17 @@ def patch_login_step_three(logger):
         if 'login-step-three' not in response.url:
             return response
 
-        logger.warning('HL requested text verification. Enter the code from your SMS below.')
-        verification_code = input('HL verification code: ').strip()
+        verification_code = os.getenv('HL_VERIFICATION_CODE', '').strip()
+        if verification_code:
+            logger.info('Using HL verification code provided via environment variable.')
+        else:
+            logger.warning('HL requested text verification. Enter the code from your SMS below.')
+            if not sys.stdin.isatty():
+                raise ValueError(
+                    'HL requested text verification, but no interactive input is available. '
+                    'Set HL_VERIFICATION_CODE and retry.'
+                )
+            verification_code = input('HL verification code: ').strip()
         if not verification_code:
             raise ValueError('No verification code entered for login-step-three')
 
