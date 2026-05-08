@@ -1,0 +1,12 @@
+# Sensitive local credentials and runtime artifacts
+secrets.json
+secrets.toml
+secrets.TOML
+session_cache/cookies.txt
+session_cache/*.har
+__pycache__/
+*.pyc
+
+# Local virtual environments
+.venv/
+venv/
